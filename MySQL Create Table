@@ -1,0 +1,34 @@
+/* 코드에 초점을 두고 작성하였습니다. 제가 사용한 SQL은 cmd환경에서 진행을 하였으므로, 직접 코드를 작성하였습니다. */
+/* 황동준 */
+
+SQL -> Structed Query Language  =>  MySQL server가 알아들을 수 있는 언어입니다.
+
+1. MySQL의 구조
+ - database의 기본적인 형태는 엑셀과 같이 표로 이루어진다고 생각하시면 됩니다.
+ - 연관된 자료들을 표에 담고, 표들을 그룹화 해서 관리하는 것이 데이터 베이스에 해당합니다.(database또는 shema라고도 합니다.)
+ - 마지막으로 여러 shema들을 관리하는 것이 데이터 베이스 서버(database server)에 해당합니다.
+ 
+2. MySQL shema의 사용
+ - database 생성 : CREATE DATABASE 이름;
+ - database 제거 : DROP DATABASE 이름;
+ - database 확인 : SHOW DATABASES;
+ - database 사용 : USE 이름; (이때의 이름은 이미 생성된 database에 해당합니다.)
+
+마지막 USE를 사용함으로써, database에 진입을 하게 되었습니다. // 다음과 같은 코드들은 소문자로도 가능합니다.
+
+3. MySQL 테이블의 생성1
+ 가장 먼저 USE 이름; 을 통해 database에 진입을 합니다.
+ 이제 표를 생성해아합니다. 표의 가장 첫줄에는 추가될 데이터의 이름들이 들어갑니다.
+ id / title / description / created / author / profile순으로 만들겠습니다.
+ 
+ -> CREATE TABLE 이름(
+  -> id INT(11) NOT NULL AUTO_INCREMENT,
+  -> title VARCHAR(100) NOT NULL,
+  -> description TEXT NULL,
+  -> created DATETIME NOT NULL,
+  -> author VARCHAR(15) NULL,
+  -> profile VARCHAR(200) NULL,
+  -> PRIMARY KEY(id)
+  -> );
+  
+이로써 테이블의 생성이 끝났습니다. 이제 data의 추가를 하겠습니다.
