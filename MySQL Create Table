@@ -21,7 +21,7 @@ SQL -> Structed Query Language  =>  MySQL server가 알아들을 수 있는 언�
  이제 표를 생성해아합니다. 표의 가장 첫줄에는 추가될 데이터의 이름들이 들어갑니다.
  id / title / description / created / author / profile순으로 만들겠습니다.
  
- -> CREATE TABLE 이름(
+ -> CREATE TABLE topic(
   -> id INT(11) NOT NULL AUTO_INCREMENT,
   -> title VARCHAR(100) NOT NULL,
   -> description TEXT NULL,
@@ -32,3 +32,73 @@ SQL -> Structed Query Language  =>  MySQL server가 알아들을 수 있는 언�
   -> );
   
 이로써 테이블의 생성이 끝났습니다. 이제 data의 추가를 하겠습니다.
+
+4. INSERT구문
+tip) 구조를 알기 위해서는 DESC topic;을 입력하면 내가 추가한 table의 구성을 확인할 수 있습니다.
++-------------+--------------+------+-----+---------+----------------+
+| Field       | Type         | Null | Key | Default | Extra          |
++-------------+--------------+------+-----+---------+----------------+
+| id          | int(11)      | NO   | PRI | NULL    | auto_increment |
+| title       | varchar(100) | NO   |     | NULL    |                |
+| description | text         | YES  |     | NULL    |                |
+| created     | datetime     | NO   |     | NULL    |                |
+| author      | varchar(15)  | YES  |     | NULL    |                |
+| profile     | varchar(200) | YES  |     | NULL    |                |
++-------------+--------------+------+-----+---------+----------------+
+
+추가를 하겠습니다. INSERT INTO를 사용합니다.
+INSERT INTO topic (title,description,created,author,profile) VALUES('ORACLE','ORACLE is ...',NOW(),'ruru','developer');
+각 구조에 대한 data추가를 위해 VALUES에 값을 넣어줍니다. 여기서 NOW()는 현재 시간을 반환해주는 함수입니다.
+이렇게 3개정도를 추가합니다. 그리고 SELECT * FROM topic; 으로 확인이 가능합니다.
++----+--------+---------------+---------------------+--------+-----------+
+| id | title  | description   | created             | author | profile   |
++----+--------+---------------+---------------------+--------+-----------+
+|  1 | MySQL  | MySQL is ...  | 2018-06-28 01:29:35 | egoing | developer |
+|  2 | ORACLE | ORACLE is ... | 2018-06-28 01:32:50 | ruru   | developer |
+|  3 | HTML   | HTML is ...   | 2018-06-28 01:50:20 | egoing | developer |
++----+--------+---------------+---------------------+--------+-----------+
+여기서 id를 추가하지 않은 이유는 id의 경우 table의 구성요소 추가를 할때 AUTO_INCREMENT로 추가를 하였기 때문에 입력값이 없으면 자동으로 추가가 됩니다.
+
+5. SELECT구문
+(1) SELECT id,title,created,author FROM topic;에 대한 출력결과입니다. 
++----+--------+---------------------+--------+
+| id | title  | created             | author |
++----+--------+---------------------+--------+
+|  1 | MySQL  | 2018-06-28 01:29:35 | egoing |
+|  2 | ORACLE | 2018-06-28 01:32:50 | ruru   |
+|  3 | HTML   | 2018-06-28 01:50:20 | egoing |
++----+--------+---------------------+--------+
+
+(2) SELECT "abc",1+1;에 대한 출력결과입니다.
++-----+-----+
+| abc | 1+1 |
++-----+-----+
+| abc |   2 |
++-----+-----+
+이와같이 table에 관련된 값이 아닌 기본적인 출력도 가능합니다.
+
+(3) SELECT id,title,created,author FROM topic WHERE author="egoing";에 대한 출력결과입니다.
++----+-------+---------------------+--------+
+| id | title | created             | author |
++----+-------+---------------------+--------+
+|  1 | MySQL | 2018-06-28 01:29:35 | egoing |
+|  3 | HTML  | 2018-06-28 01:50:20 | egoing |
++----+-------+---------------------+--------+
+author의 값이 egoing인 것만 필터링을 합니다.
+
+(4) SELECT id,title,created,author FROM topic WHERE author="egoing" ORDER BY id DESC;에 대한 출력결과입니다.
++----+-------+---------------------+--------+
+| id | title | created             | author |
++----+-------+---------------------+--------+
+|  3 | HTML  | 2018-06-28 01:50:20 | egoing |
+|  1 | MySQL | 2018-06-28 01:29:35 | egoing |
++----+-------+---------------------+--------+
+id를 기준으로 가장 큰 숫자가 먼저 나오는 것으로 바뀐것을 확인할 수 있습니다. -> DESC때문에 그렇습니다.
+
+(5) SELECT id,title,created,author FROM topic WHERE author="egoing" ORDER BY id DESC LIMIT 1;에 대한 출력결과입니다.
++----+-------+---------------------+--------+
+| id | title | created             | author |
++----+-------+---------------------+--------+
+|  3 | HTML  | 2018-06-28 01:50:20 | egoing |
++----+-------+---------------------+--------+
+LIMIT 1로 인해서 출력결과의 제한을 1개로 줄였으므로, 1개만 출력이 되는 것을 확인할 수 있습니다.
