@@ -102,3 +102,106 @@ id를 기준으로 가장 큰 숫자가 먼저 나오는 것으로 바뀐것을 
 |  3 | HTML  | 2018-06-28 01:50:20 | egoing |
 +----+-------+---------------------+--------+
 LIMIT 1로 인해서 출력결과의 제한을 1개로 줄였으므로, 1개만 출력이 되는 것을 확인할 수 있습니다.
+
+6. UPDATE구문
+수정에 관한 방법입니다.
+UPDATE topic SET description='ORACLE is', title='Oracle' WHERE id=2; -> WHERE전까지가 기본적인 방법입니다.
+WHERE의 경우 id = 2로 위치를 정해주었습니다. WHERE를 추가하지 않고, 실행을 시키게 되면 해당 TABLE의 모든 data의 내용이 바뀌게 됩니다.
+매우 주의해야 하는 경우입니다!!
+
+-기존 TABLE
++----+--------+---------------+---------------------+--------+-----------+
+| id | title  | description   | created             | author | profile   |
++----+--------+---------------+---------------------+--------+-----------+
+|  1 | MySQL  | MySQL is ...  | 2018-06-28 01:29:35 | egoing | developer |
+|  2 | ORACLE | ORACLE is ... | 2018-06-28 01:32:50 | ruru   | developer |
+|  3 | HTML   | HTML is ...   | 2018-06-28 01:50:20 | egoing | developer |
++----+--------+---------------+---------------------+--------+-----------+
+-UPDATE후 TABLE
++----+--------+--------------+---------------------+--------+-----------+
+| id | title  | description  | created             | author | profile   |
++----+--------+--------------+---------------------+--------+-----------+
+|  1 | MySQL  | MySQL is ... | 2018-06-28 01:29:35 | egoing | developer |
+|  2 | Oracle | ORACLE is    | 2018-06-28 01:32:50 | ruru   | developer |
+|  3 | HTML   | HTML is ...  | 2018-06-28 01:50:20 | egoing | developer |
++----+--------+--------------+---------------------+--------+-----------+
+id가 2인 곳에 title, description의 내용이 바뀐걸 확인할 수 있습니다.
+
+7. DELETE구문
+DELETE FROM topic;을 실행하게 되면 모든 data가 삭제가 되므로, 주의!
+DELETE FROM topic WHERE id=3;을 실행하게 되면 id가 3인 부분이 사라지게 됩니다.(해당 예시는 보이지 않겠습니다.)
+
+8. RENAME구문
+RENAME TABLE topic TO topic_backup;으로 인해 topic의 이름이 topic_backup의 이름으로 바뀌게 됩니다.
++-------------------+
+| Tables_in_tempone |
++-------------------+
+| topic_backup      |
++-------------------+
+SHOW TABLES;로 확인한 결과입니다.
+
+★관계형데이터베이스의 필요성
+ - 매우 많은 데이터를 다루게 되는 경우 data의 중복은 개선이 필요하다는 의미입니다. 하지만 매우 많은 data의 중복이므로, 수정은 매우 어렵습니다.
+ 여기서 관계형데이터베이스는 서로간의 data가 관계를 맺음으로써, 명령어 1개로 수정이 가능하게 됩니다. => 이게 MySQL입니다.
+ 
+ 또 다른 특징은 분산된 데이터를 보여줄 경우 사용자가 편하게 하나로 보여줄 수 있는 것도 MySQL입니다.
+ 
+ 9. JOIN - 관계형데이터베이스의 꽃
+ mysql> SELECT * FROM topic;
++----+------------+-------------------+---------------------+-----------+
+| id | title      | description       | created             | author_id |
++----+------------+-------------------+---------------------+-----------+
+|  1 | MySQL      | MySQL is ...      | 2018-06-28 23:01:12 |         1 |
+|  2 | Oracle     | Oracle is ...     | 2018-06-28 23:03:17 |         1 |
+|  3 | SQL Server | SQL Server is ... | 2018-06-28 23:03:31 |         2 |
+|  4 | PostgreSQL | PostgreSQL is ... | 2018-06-28 23:03:41 |         3 |
+|  5 | MongoDB    | MongoDB is ...    | 2018-06-28 23:03:50 |         1 |
++----+------------+-------------------+---------------------+-----------+
+
+mysql> SELECT * FROM author;
++----+--------+---------------------------+
+| id | name   | profile                   |
++----+--------+---------------------------+
+|  1 | egoing | developer                 |
+|  2 | duru   | database administrator    |
+|  3 | taeho  | data scientist, developer |
++----+--------+---------------------------+
+
+가장 먼저 위와 같이 2개의 TABLE을 생성합니다. author_id를 통해서 author TABLE과 연관이 되어있습니다. 분산된 데이터입니다.
+
+SELECT * FROM topic LEFT JOIN author ON topic.author_id = author.id; 이와 같은 코드로 아래와 같은 TABLE을 도출할 수 있습니다.
++----+------------+-------------------+---------------------+-----------+------+--------+---------------------------+
+| id | title      | description       | created             | author_id | id   | name   | profile                   |
++----+------------+-------------------+---------------------+-----------+------+--------+---------------------------+
+|  1 | MySQL      | MySQL is ...      | 2018-06-28 23:01:12 |         1 |    1 | egoing | developer                 |
+|  2 | Oracle     | Oracle is ...     | 2018-06-28 23:03:17 |         1 |    1 | egoing | developer                 |
+|  5 | MongoDB    | MongoDB is ...    | 2018-06-28 23:03:50 |         1 |    1 | egoing | developer                 |
+|  3 | SQL Server | SQL Server is ... | 2018-06-28 23:03:31 |         2 |    2 | duru   | database administrator    |
+|  4 | PostgreSQL | PostgreSQL is ... | 2018-06-28 23:03:41 |         3 |    3 | taeho  | data scientist, developer |
++----+------------+-------------------+---------------------+-----------+------+--------+---------------------------+
+한번에 볼 수 있는 아주 편한 기능입니다.
+
+SELECT topic.id,title,description,created,name,profile FROM topic LEFT JOIN author ON topic.author_id = author.id;
++----+------------+-------------------+---------------------+--------+---------------------------+
+| id | title      | description       | created             | name   | profile                   |
++----+------------+-------------------+---------------------+--------+---------------------------+
+|  1 | MySQL      | MySQL is ...      | 2018-06-28 23:01:12 | egoing | developer                 |
+|  2 | Oracle     | Oracle is ...     | 2018-06-28 23:03:17 | egoing | developer                 |
+|  5 | MongoDB    | MongoDB is ...    | 2018-06-28 23:03:50 | egoing | developer                 |
+|  3 | SQL Server | SQL Server is ... | 2018-06-28 23:03:31 | duru   | database administrator    |
+|  4 | PostgreSQL | PostgreSQL is ... | 2018-06-28 23:03:41 | taeho  | data scientist, developer |
++----+------------+-------------------+---------------------+--------+---------------------------+
+필요없는 data인 author_id와 author TABLE의 id를 지우는 코드입니다. *대신에 topic.id,title,description,created,name,profile를 추가하였습니다.
+topic.id는 author TABLE에도 id가 존재하기 때문에 구분을 해주기 위해서 입니다.
+
+마지막으로 TABLE을 보여줄 때, 안의 이름을 바꾸고 싶다면 topic.id AS topic_id를 사용해서 바꿀 수 있습니다.
+SELECT topic.id AS topic_id,title,description,created,name,profile FROM topic LEFT JOIN author ON topic.author_id = author.id;
++----------+------------+-------------------+---------------------+--------+---------------------------+
+| topic_id | title      | description       | created             | name   | profile                   |
++----------+------------+-------------------+---------------------+--------+---------------------------+
+|        1 | MySQL      | MySQL is ...      | 2018-06-28 23:01:12 | egoing | developer                 |
+|        2 | Oracle     | Oracle is ...     | 2018-06-28 23:03:17 | egoing | developer                 |
+|        5 | MongoDB    | MongoDB is ...    | 2018-06-28 23:03:50 | egoing | developer                 |
+|        3 | SQL Server | SQL Server is ... | 2018-06-28 23:03:31 | duru   | database administrator    |
+|        4 | PostgreSQL | PostgreSQL is ... | 2018-06-28 23:03:41 | taeho  | data scientist, developer |
++----------+------------+-------------------+---------------------+--------+---------------------------+
